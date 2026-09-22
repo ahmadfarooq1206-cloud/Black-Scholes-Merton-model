@@ -1,8 +1,9 @@
 import numpy as np
-from scipy.special import erf
+from scipy.integrate import quad
 
-def N(x):
-    return 0.5*(1+erf(x/2**0.5))
+def N(z):
+    f=lambda x: (2*np.pi)**-.5*np.exp(-.5*x**2)
+    return quad(f,-np.inf,z)[0]
 
 def Call(current,strike,time,risk_free_interest_rate,dividend_yield,volatility):
     d1=(np.log(current/strike)+time*(risk_free_interest_rate-dividend_yield+0.5*volatility**2))/(volatility*time**0.5)
