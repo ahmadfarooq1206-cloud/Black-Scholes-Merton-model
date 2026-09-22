@@ -5,7 +5,7 @@ from bsm import Call,Put
 
 ticker=input('Please enter the ticker for the stock or ETF you would like an option for?')
 data=yf.download(ticker,period='1y')
-current=data['Close'].dropna().to_numpy()[-1][0].round(2) #type:ignore
+current=data['Close'].dropna().to_numpy()[-1][0].round(2)
 
 tick=yf.Ticker(ticker)
 try:
