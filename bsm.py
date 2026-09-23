@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.integrate import quad
+from scipy.special import erf
 
 def N(z):
     return .5*(1+erf(z/2**.5))
