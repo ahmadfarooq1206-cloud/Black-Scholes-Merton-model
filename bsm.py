@@ -2,7 +2,7 @@ import numpy as np
 from scipy.special import erf
 
 def N(z):
-    return .5*(1+erf(z/2**.5))
+    return .5*(1+erf(z/2**-.5))
 
 def Call(current,strike,time,risk_free_interest_rate,dividend_yield,volatility):
     d1=(np.log(current/strike)+time*(risk_free_interest_rate-dividend_yield+0.5*volatility**2))/(volatility*time**0.5)
