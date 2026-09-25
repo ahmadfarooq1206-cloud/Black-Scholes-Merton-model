@@ -1,0 +1,6 @@
+Modules required to run this project
+
+NumPy: https://pypi.org/project/numpy/
+SciPy: https://pypi.org/project/scipy/
+pandas: https://pypi.org/project/pandas/
+matplotlib: https://pypi.org/project/matplotlib/
