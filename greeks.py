@@ -11,11 +11,9 @@ def N(z):
 def dN(z):
     return (2*pi)**-.5*np.exp(-.5*z**2)
 
-# Black-Scholes-Merton model input
+# Black-Scholes-Merton model inputs
 def d1(S,K,t,r,q,o):
     return (np.log(S/K)+t*(r-q+.5*o**2))/(o*t**.5)
-
-# Black-Scholes-Merton model input
 def d2(d1,o,t):
     return d1-o*t**.5
 
