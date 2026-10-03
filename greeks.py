@@ -1,6 +1,7 @@
 from scipy.special import erf
 import numpy as np
 
+# Pi
 pi=np.pi
 
 # Standard normal cumulative function
