@@ -1,41 +1,49 @@
-#Performance of code may vary with time of day
-
-import pandas as pd
+import bsm
+import greeks
 import numpy as np
+import pandas as pd
 import yfinance as yf
-from bsm import Call,Put
+from scipy.special import erf
 
-#Acquires asset
-ticker=input('Please enter the ticker for the stock or ETF on Yahoo Finance you would like an option for? ')
-#Loads data for asset
+ticker=input('Please enter the ticker for the stock on Yahoo Finance you would like an option for? ')
 data=yf.download(ticker,period='1y',multi_level_index=False)
-#Retrieves current value of asset
-current=round(float(data['Close'].tail(1).to_numpy()[0]),2) 
+S=round(float(data['Close'].tail(1).to_numpy()[0]),2) #type:ignore
 
-#Checks for dividends if available
 tick=yf.Ticker(ticker)
 try:
-    dividend_yield=tick.info['dividendYield']/100
+    q=tick.info['dividendYield']/100
 except KeyError:
-    dividend_yield=0
+    q=0
 
 df=pd.DataFrame(data)
-#Calculates logarithmic returns over the past year
 df['log_returns']=np.log(df['Close']/df['Close'].shift(1))
-#Calculates annualised historical volatility
-volatility=df['log_returns'].std()*252**.5
+o=df['log_returns'].std()*252**.5
 
-#Asks for strike price
-strike=float(input(f'The current price of {ticker} is {current}.\nWhat strike price would you like? '))
-#Asks for time to maturity
-time=float(input(f'How long, as a decimal in years, would you like to hold your {ticker} option for? '))
-#Asks for local bond yields rate
-risk_free_interest_rate=float(input(f'Enter the risk free interest rate of the currency {ticker} is denominated in as a decimal '))
+K=float(input(f'The current price of {ticker} is {S}.\nWhat strike price would you like? '))
+t=float(input(f'How long, as a decimal in years, would you like to hold your {ticker} option for? '))
+r=float(input(f'Enter the risk free interest rate of the currency {ticker} is denominated in as a decimal '))
 
-info=[current,strike,time,risk_free_interest_rate,dividend_yield,volatility]
+d1=(np.log(S/K)+t*(r-q+.5*o**2))/(o*t**.5)
+d2=d1-o*t**.5
 
-call,put=Call(*info).round(2),Put(*info).round(2)
+option_call_delta=greeks.Call_Delta(q,t,d1)
+option_put_delta=greeks.Put_Delta(q,t,d1)
+option_gamma=greeks.Gamma(S,q,t,o,d1)
+option_call_theta=greeks.Call_Theta(S,K,t,r,q,o,d1,d2)
+option_put_theta=greeks.Put_Theta(S,K,t,r,q,o,d1,d2)
+option_vega=greeks.Vega(S,q,t,d1)
+option_call_rho=greeks.Call_Rho(K,t,r,d2)
+option_put_rho=greeks.Put_Rho(K,t,r,d2)
 
-#Gives option prices
-print(f'Call Price: {call}')
-print(f'Put Price: {put}')
+call_price,put_price=bsm.Call(S,K,t,r,q,o).round(2),bsm.Put(S,K,t,r,q,o).round(2)
+print(f'Call Price: {call_price}')
+print(f'Put Price: {put_price}\n')
+
+print(f'Call Delta: {option_call_delta}')
+print(f'Put Delta: {option_put_delta}')
+print(f'Gamma: {option_gamma}')
+print(f'Call Theta: {option_call_theta}')
+print(f'Put Theta: {option_put_theta}')
+print(f'Vega: {option_vega}')
+print(f'Call Rho: {option_call_rho}')
+print(f'Put Rho: {option_put_rho}')
