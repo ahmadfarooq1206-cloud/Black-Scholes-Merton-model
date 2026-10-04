@@ -1,5 +1,6 @@
 import numpy as np
 
+# Monte Carlo simulation for call prices
 def bsm_call_monte_carlo(S,K,t,r,q,o):
     z=np.random.standard_normal(1000000)
     St=S*np.exp(t*(r-q-.5*o**2)+o*t**.5*z)
@@ -7,6 +8,7 @@ def bsm_call_monte_carlo(S,K,t,r,q,o):
     call_price=np.exp(-r*t)*np.mean(payoff)
     return call_price
 
+# Monte Carlo simulation for put prices
 def bsm_put_monte_carlo(S,K,t,r,q,o):
     z=np.random.standard_normal(1000000)
     St=S*np.exp(t*(r-q-.5*o**2)+o*t**.5*z)
